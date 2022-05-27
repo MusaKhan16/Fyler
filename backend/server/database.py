@@ -13,7 +13,7 @@ class Users(orm.Model):
 
     fields = {
         "id": orm.Integer(primary_key=True),
-        "name": orm.String(min_length=3, max_length=10, unique=True, allow_null=False),
+        "name": orm.String(min_length=3, max_length=40, unique=True, allow_null=False),
         "password": orm.String(min_length=64, max_length=64, allow_null=False),
         "root_path": orm.Text(unique=True, allow_null=True),
     }

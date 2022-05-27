@@ -135,15 +135,15 @@ async def create_user_root(
 @server_router.post("/loginUser")
 async def login(request: Request):
     """
-        Endpoint to verify and return user credentials for login
+    Endpoint to verify and return user credentials for login
 
-        Parameters
-        ----------
-        request : Request
-                The incoming request object
+    Parameters
+    ----------
+    request : Request
+            The incoming request object
 
-        Returns
-        -------
+    Returns
+    -------
     JSONResponse
         If the body params are invalid status_code=403
         JSONResponse
@@ -186,14 +186,11 @@ async def login(request: Request):
     return {
         "id": user_data.id,
         "name": user_data.name,
-        "root_path": user_data.root_path,
     }
 
 
 @server_router.get("/getFiles/{user_id}")
-async def get_files(
-    user_id: int, path: str | None = None, user_manager: UserManager = Depends(manager)
-):
+async def get_files(user_id: int, user_manager: UserManager = Depends(manager)):
     """
         Endpoint to get files of a user from user_id or a path if given
 
@@ -218,41 +215,29 @@ async def get_files(
 
     logging.info("Endpoint Get files has been executed")
 
-    if not path:
-        logging.info("path hasnt been supplied, so continuing with user_id")
-        logging.warn("given user_id might not exist in filesystem")
+    logging.info("path hasnt been supplied, so continuing with user_id")
+    logging.warn("given user_id might not exist in filesystem")
 
-        directory_path = await user_manager.get_user_root(str(user_id))
+    directory_path = await user_manager.get_user_root(str(user_id))
 
-        if not directory_path:
-            logging.error(f"The {user_id=} didnt exist in the filesystem")
-            return JSONResponse(
-                {"message": f"No such root folder exists with id={user_id}!"},
-                status_code=409,
-            )
-
-        logging.info("User is to recieve list of files in root directory")
-        logging.debug(f"User who accessed: {user_id=}")
-
-        return {"files": [file.name for file in directory_path.list_dir()]}
-
-    if not pathlib.Path(path).resolve().is_relative_to(user_manager.root):
-        logging.critical(
-            f"The path supplied resolves outside of safezone filesystem, Illegal location"
+    if not directory_path:
+        logging.error(f"The {user_id=} didnt exist in the filesystem")
+        return JSONResponse(
+            {"message": f"No such root folder exists with id={user_id}!"},
+            status_code=409,
         )
-        return JSONResponse({"message": "Illegal file location! "}, status_code=423)
 
-    logging.info(
-        "User is to recieve files, passed successfully endpoint Get files ends"
-    )
-    logging.debug(f"Path accessed, by {user_id=} {path=}")
+    logging.info("User is to recieve list of files in root directory")
+    logging.debug(f"User who accessed: {user_id=}")
 
-    return {"files": [file.name for file in UserFolder(path).list_dir()]}
+    return {"files": [file.name for file in directory_path.list_dir()]}
 
 
 @server_router.post("/uploadFiles")
 async def upload_files(
-    files: list[UploadFile] = File(...), folder_path: str = Form(...)
+    files: list[UploadFile] = File(...),
+    user_id: str = Form(...),
+    user_manager: UserManager = Depends(manager),
 ):
     """
         Endpoint to upload files in bulk with folder_path as destination
@@ -271,9 +256,12 @@ async def upload_files(
     """
 
     logging.info("Endpoint upload_files has been triggered")
-    logging.debug(f"Path to write to {folder_path=}")
+    logging.debug(f"User to write to {user_id=}")
 
-    user_folder = UserFolder(folder_path)
+    user_folder = await user_manager.get_user_root(user_id)
+
+    if not user_folder:
+        return JSONResponse({"message": "user root dir doesnt exist!"}, status_code=409)
 
     for file in files:
         logging.debug(f"Writing {file.filename} to {user_folder.root}")

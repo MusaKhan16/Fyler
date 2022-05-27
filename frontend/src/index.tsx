@@ -8,7 +8,9 @@ import Modal from 'react-modal';
 import './css/index.css';
 
 // Pages Directory
-import * as Pages from './pages';
+// PS implement code splitting with react lazy
+import { Login, Home, SignUp, Dashboard, PageNotFound } from './pages';
+import PageLayout from './components/Layouts/PageLayout';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -18,16 +20,18 @@ Modal.setAppElement('#root');
 
 root.render(
 	<React.StrictMode>
-		<UserContextProvider>
-			<BrowserRouter>
+		<BrowserRouter>
+			<UserContextProvider>
 				<Routes>
-					<Route path="/" element={<Pages.Home />} />
-					<Route path="login" element={<Pages.Login />} />
-					<Route path="sign-up" element={<Pages.SignUp />} />
-					<Route path="dashboard" element={<Pages.Dashboard />} />
-					<Route path="*" element={<Pages.PageNotFound />} />
+					<Route path="/" element={<PageLayout />}>
+						<Route index element={<Home />} />
+						<Route path="login" element={<Login />} />
+						<Route path="sign-up" element={<SignUp />} />
+						<Route path="dashboard" element={<Dashboard />} />
+						<Route path="*" element={<PageNotFound />} />
+					</Route>
 				</Routes>
-			</BrowserRouter>
-		</UserContextProvider>
+			</UserContextProvider>
+		</BrowserRouter>
 	</React.StrictMode>
 );

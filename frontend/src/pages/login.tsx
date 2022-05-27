@@ -1,15 +1,13 @@
 import type React from 'react';
-
-import PageLayout from '../components/Layouts/PageLayout';
-
 import { useUserContext } from '../components/context/AuthContext';
 import { loginUser } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Login: React.FC = () => {
 	const navigate = useNavigate();
 
-	const { setName, setUserId, setRootPath } = useUserContext();
+	const { name, id, signIn } = useUserContext();
 
 	const formSubmissionHandler = async (
 		event: React.FormEvent<HTMLFormElement>
@@ -20,24 +18,25 @@ const Login: React.FC = () => {
 			new FormData(event.currentTarget).entries()
 		);
 
-		// Check creation status code before creating the root
 		const data = await loginUser(form_object);
 
 		if (data.status_code === 200) {
-			console.log('Hey why was i run?', data);
 			// Create a better interface to set User Session Details
-			setName(data.name);
-			setUserId(data.id);
-			setRootPath(data.root_path);
-			navigate('/dashboard');
+			signIn(data.name, data.id);
 			return;
 		}
 
 		alert('Login attempt fail!');
 	};
 
+	useEffect(() => {
+		if (name && id) {
+			navigate('/dashboard');
+		}
+	});
+
 	return (
-		<PageLayout className="bg-gray-800">
+		<div>
 			<div className="grid place-items-center h-full">
 				<form
 					onSubmit={formSubmissionHandler}
@@ -54,7 +53,7 @@ const Login: React.FC = () => {
 							required
 							autoComplete="username"
 							minLength={3}
-							maxLength={10}
+							maxLength={40}
 						/>
 					</fieldset>
 
@@ -68,7 +67,7 @@ const Login: React.FC = () => {
 							required
 							autoComplete="current-password"
 							minLength={5}
-							maxLength={10}
+							maxLength={50}
 						/>
 					</fieldset>
 
@@ -80,7 +79,7 @@ const Login: React.FC = () => {
 					</button>
 				</form>
 			</div>
-		</PageLayout>
+		</div>
 	);
 };
 

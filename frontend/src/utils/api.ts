@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 export function API(url: string) {
 	return `${process.env.REACT_APP_API_URL}${url}`;
 }
@@ -63,3 +65,22 @@ export async function uploadFiles(userFormData: FormData) {
 
 	return { ...data, status_code: response.status };
 }
+
+export const useFiles = (user_id: number | null) => {
+	const [files, setFiles] = useState<string[]>([]);
+
+	const fetchFiles = async () => {
+		const response = await fetch(API(`getFiles/${user_id}`));
+
+		if (response.ok) {
+			const fileData = await response.json();
+			setFiles(fileData.files);
+		}
+	};
+
+	useEffect(() => {
+		user_id && fetchFiles();
+	}, [user_id]);
+
+	return { files, refetch: fetchFiles };
+};

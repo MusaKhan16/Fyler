@@ -1,11 +1,10 @@
 import type React from 'react';
-import PageLayout from '../components/Layouts/PageLayout';
 import { createUserAccount, createUserRoot } from '../utils/api';
 import { useUserContext } from '../components/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const SignUp: React.FC = () => {
-	const { setName, setUserId, setRootPath } = useUserContext();
+	const { signIn } = useUserContext();
 	const navigate = useNavigate();
 
 	const formSubmissionHandler = async (
@@ -19,23 +18,19 @@ const SignUp: React.FC = () => {
 
 		// Check creation status code before creating the root
 		const data = await createUserAccount(form_object);
-		const userRootPath = await createUserRoot(data.id);
+		await createUserRoot(data.id);
 
 		if (!(data.status_code === 200)) {
 			alert('Sign up failed!');
 			return;
 		}
 
-		// Create a better interface to set User Session Details
-
-		setName(data.name);
-		setUserId(data.id);
-		setRootPath(userRootPath.root_path);
+		signIn(data.name, data.id);
 		navigate('/dashboard');
 	};
 
 	return (
-		<PageLayout className="bg-gray-800">
+		<div>
 			<div className="grid place-items-center h-full">
 				<form
 					onSubmit={formSubmissionHandler}
@@ -52,7 +47,7 @@ const SignUp: React.FC = () => {
 							required
 							autoComplete="username"
 							minLength={3}
-							maxLength={10}
+							maxLength={40}
 						/>
 					</fieldset>
 
@@ -66,7 +61,7 @@ const SignUp: React.FC = () => {
 							required
 							autoComplete="current-password"
 							minLength={5}
-							maxLength={10}
+							maxLength={50}
 						/>
 					</fieldset>
 
@@ -91,7 +86,7 @@ const SignUp: React.FC = () => {
 					</button>
 				</form>
 			</div>
-		</PageLayout>
+		</div>
 	);
 };
 

@@ -55,7 +55,6 @@ class User(BaseModel):
         user
             The user, type is unkown
         """
-        print(field_details)
 
         try:
             user = await Users.objects.get(**field_details)

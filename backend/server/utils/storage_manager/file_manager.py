@@ -13,6 +13,11 @@ class UserFolder:
         """Encapsulation for self._root"""
         return self._root
 
+    @property
+    def size(self):
+        """Current size of directory in bytes"""
+        return sum(file.stat().st_size for file in self.root.iterdir())
+
     def list_dir(self, path: str | pathlib.Path | None = None):
         """
         Get contents of a directory as a tuple

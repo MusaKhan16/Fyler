@@ -4,17 +4,14 @@ import { GenericComponentProps } from '../../utils/interfaces';
 interface AuthContextInterface {
 	id: number;
 	name: string;
-	rootPath?: string;
-	goToPath: Function;
-	goBackPath: Function;
-	setName: React.Dispatch<React.SetStateAction<string>>;
-	setUserId: React.Dispatch<React.SetStateAction<number>>;
-	setRootPath: React.Dispatch<React.SetStateAction<string>>;
+	signIn: (username: string, id: number) => void;
+	signOut: () => void;
 }
 
 const UserContext = React.createContext<object>({});
 
-export const useFilePath = (filePath: string = '') => {
+/* To be used later */
+const useFilePath = (filePath: string = '') => {
 	const [currentPath, setPath] = React.useState<string>(filePath);
 
 	const goTo = (name: string) => {
@@ -29,25 +26,28 @@ export const useFilePath = (filePath: string = '') => {
 	return [currentPath, goTo, goBack, setPath];
 };
 
-const useUserContext = () => {
-	return React.useContext(UserContext) as AuthContextInterface;
-};
-
 /** Higher Level User Context Provider for global user state */
 const UserContextProvider: React.FC<GenericComponentProps> = ({ children }) => {
 	const [name, setName] = React.useState<string>('');
-	const [id, setUserId] = React.useState<number>();
-	const [rootPath, setRootPath] = React.useState<string>('');
+	const [id, setUserId] = React.useState<number | null>();
+
+	const signOut = () => {
+		setName('');
+		setUserId(null);
+	};
+
+	const signIn = (username: string, id: number) => {
+		setName(username);
+		setUserId(id);
+	};
 
 	return (
 		<UserContext.Provider
 			value={{
 				name,
 				id,
-				rootPath,
-				setName,
-				setUserId,
-				setRootPath,
+				signOut,
+				signIn,
 			}}
 		>
 			{children}
@@ -55,5 +55,9 @@ const UserContextProvider: React.FC<GenericComponentProps> = ({ children }) => {
 	);
 };
 
+const useUserContext = () => {
+	return React.useContext(UserContext) as AuthContextInterface;
+};
+
 export default UserContextProvider;
-export { useUserContext };
+export { useUserContext, useFilePath };

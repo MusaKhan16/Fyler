@@ -1,10 +1,9 @@
-import PageLayout from '../components/Layouts/PageLayout';
 import { ReactComponent as RocketIcon } from '../assets/icons/rocket.svg';
 import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
 	return (
-		<PageLayout>
+		<div>
 			<section className="view-height bg-gray-800 flex flex-col justify-between ">
 				<div className="flex flex-col lg:flex-row justify-around items-center text-white p-4 h-full">
 					<div className="h-full w-full lg:w-1/2">
@@ -36,7 +35,7 @@ const Home: React.FC = () => {
 					alt="clouds"
 				/>
 			</section>
-		</PageLayout>
+		</div>
 	);
 };
 
