@@ -1,0 +1,15 @@
+
+# ----------------Backend-------------------
+# Cache
+__pycache__
+
+
+# Modules
+/poetry.lock
+
+# Secrets
+.env
+
+root
+
+database.sqlite
