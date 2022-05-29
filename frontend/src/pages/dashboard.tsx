@@ -6,15 +6,16 @@ import { FileCard, CustomModal, useModal } from '../components/cards';
 import { useUserContext } from '../components/context/AuthContext';
 import { AiFillFileAdd } from 'react-icons/ai';
 import { uploadFiles, useFiles } from '../utils/api';
+import Input from '../components/Input';
 
 const Dashboard: React.FC = () => {
-	const { id } = useUserContext();
-
 	const navigate = useNavigate();
-	const [fileModalIsOpen, fileModalToggle] = useModal();
 
-	const { files, refetch } = useFiles(id);
+	const [fileModalIsOpen, fileModalToggle] = useModal();
 	const [query, setQuery] = useState<string>('');
+
+	const { id } = useUserContext();
+	const { files, refetch } = useFiles(id);
 
 	const filterFiles = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		setQuery(event.currentTarget.value);
@@ -26,8 +27,7 @@ const Dashboard: React.FC = () => {
 		const formData = new FormData(event.currentTarget);
 		formData.append('user_id', String(id));
 
-		uploadFiles(formData).then(refetch);
-		fileModalToggle();
+		uploadFiles(formData).then(refetch).then(fileModalToggle);
 	};
 
 	useEffect(() => {
@@ -48,16 +48,17 @@ const Dashboard: React.FC = () => {
 				</form>
 			</CustomModal>
 
-			<input
+			<Input
+				icon="🔍"
 				type="text"
-				className="block mx-auto my-12 p-3 rounded-md outline-none border-2 border-zinc-500 sm:w-1/2 w-5/6"
-				placeholder="Search.."
+				className="block mx-auto my-12 lg:w-1/2 w-5/6 bg-gray-900"
+				placeholder="Search..."
 				onInput={filterFiles}
 			/>
-			<div className="text-zinc-500 w-5/6 mx-auto ">
+			<div className="text-zinc-500 w-5/6 mx-auto">
 				<button
 					onClick={fileModalToggle}
-					className="inline-flex py-4 px-8 bg-zinc-800 border-2 border-zinc-500 cursor-pointer rounded-md"
+					className="inline-flex items-center justify-center py-4 px-8 bg-gray-900 border-2 border-zinc-600 cursor-pointer rounded-md w-full sm:w-auto"
 				>
 					<AiFillFileAdd /> Add File
 				</button>
@@ -66,7 +67,7 @@ const Dashboard: React.FC = () => {
 				{files
 					.filter((filename) => filename.startsWith(query))
 					.map((file, idx) => (
-						<FileCard filename={file} key={idx} />
+						<FileCard filename={file} key={idx} refetch={refetch} />
 					))}
 			</div>
 		</div>

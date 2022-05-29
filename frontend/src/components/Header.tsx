@@ -1,7 +1,7 @@
 import type React from 'react';
-import type { GenericComponentProps } from '../utils/interfaces';
 import { Link } from 'react-router-dom';
 import { useUserContext } from './context/AuthContext';
+import type { GenericComponentProps } from '../utils/interfaces';
 
 const Header: React.FC<GenericComponentProps> = ({ className }) => {
 	const { name, id, signOut } = useUserContext();
@@ -11,10 +11,10 @@ const Header: React.FC<GenericComponentProps> = ({ className }) => {
 			<Link to="/">
 				<h1 className="text-3xl font-bold">Fyler</h1>
 			</Link>
-			<ul className="flex justify-evenly items-center w-1/4 font-bold">
+			<ul className="flex justify-evenly items-center space-x-12  font-bold">
 				{name && id ? (
 					<>
-						<li>
+						<li className="border-b border-transparent hover:border-black">
 							<Link to="/dashboard">Dashboard</Link>
 						</li>
 						<li>

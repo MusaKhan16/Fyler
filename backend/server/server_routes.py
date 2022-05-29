@@ -1,10 +1,11 @@
+from distutils.command.upload import upload
 from hashlib import sha256
 from server.utils.storage_manager import UserManager, UserFolder
 from fastapi import Depends, File, Form, Request, UploadFile
 from fastapi.responses import JSONResponse, FileResponse
 from server.models import User
 from fastapi.routing import APIRouter
-
+import asyncio
 import aiosqlite
 import pathlib
 import logging
@@ -255,6 +256,8 @@ async def upload_files(
         If all goes well
     """
 
+    uploading_file_tasks = []
+
     logging.info("Endpoint upload_files has been triggered")
     logging.debug(f"User to write to {user_id=}")
 
@@ -265,20 +268,43 @@ async def upload_files(
 
     for file in files:
         logging.debug(f"Writing {file.filename} to {user_folder.root}")
-        await user_folder.write_file(file.filename, await file.read())
+
+        uploading_file_tasks.append(
+            asyncio.create_task(
+                user_folder.write_file(file.filename, await file.read())
+            )
+        )
+
+    await asyncio.gather(*uploading_file_tasks)
 
     logging.info("upload_files endpoint ends file uploading was successfull")
 
     return {"message": "success"}
 
 
+@server_router.delete("/files/{user_id}/{filename}")
+async def delete_file(
+    user_id: str, filename: str, user_manager: UserManager = Depends(manager)
+):
+    """Endpoint that deletes a file"""
+
+    user_folder = await user_manager.get_user_root(user_id)
+
+    if not user_folder:
+        return JSONResponse({"message": "user directory not found!"}, status_code=403)
+
+    await user_folder.remove_file(filename)
+
+    return JSONResponse({"message": "succsseful file deletion"})
+
+
 @server_router.get("/files/{user_id}/{filename}")
 async def download_file(
     user_id: str, filename: str, user_manager: UserManager = Depends(manager)
 ):
-    user_path = await user_manager.get_user_root(user_id)
+    user_folder = await user_manager.get_user_root(user_id)
 
-    if not user_path:
+    if not user_folder:
         return JSONResponse({"message": "user directory not found!"}, status_code=403)
 
-    return FileResponse(str(user_path.root / filename), filename=filename)
+    return FileResponse(str(user_folder.root / filename), filename=filename)

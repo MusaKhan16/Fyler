@@ -20,7 +20,6 @@ const customModalStyle = {
 		borderRadius: '1rem',
 		padding: '0.5rem',
 		maxWidth: '400px',
-		minWidth: '320px',
 		height: '400px',
 		margin: 'auto',
 		color: 'white',
@@ -34,19 +33,23 @@ const useModal = () => {
 	);
 };
 
-const CustomModal: React.FC<ModalProps> = (modalProps) => {
+const CustomModal: React.FC<ModalProps> = ({
+	isOpen,
+	children,
+	onRequestClose,
+}) => {
 	return (
 		<Modal
-			isOpen={modalProps.isOpen}
-			onRequestClose={modalProps.onRequestClose}
+			isOpen={isOpen}
+			onRequestClose={onRequestClose}
 			style={customModalStyle}
 		>
 			<IoClose
-				onClick={modalProps.onRequestClose}
+				onClick={onRequestClose}
 				className="block cursor-pointer rounded-md hover:bg-zinc-900 bg-transparent text-zinc-600"
 				size={28}
 			/>
-			<div className="mx-1 h-[90%]">{modalProps.children}</div>
+			<div className="mx-1 h-[90%]">{children}</div>
 		</Modal>
 	);
 };

@@ -66,6 +66,19 @@ export async function uploadFiles(userFormData: FormData) {
 	return { ...data, status_code: response.status };
 }
 
+export async function deleteFile(user_id: number, filename: string) {
+	const response = await fetch(API(`files/${user_id}/${filename}`), {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+
+	const data = await response.json();
+
+	return { ...data, status_code: response.status };
+}
+
 export const useFiles = (user_id: number | null) => {
 	const [files, setFiles] = useState<string[]>([]);
 

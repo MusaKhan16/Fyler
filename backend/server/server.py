@@ -10,7 +10,6 @@ app = FastAPI()
 logging.basicConfig(
     format="%(name)s - %(levelname)s - %(asctime)s - %(message)s",
     level=logging.DEBUG,
-    filename="../log.txt",
 )
 
 Logger = logging.getLogger(__name__)

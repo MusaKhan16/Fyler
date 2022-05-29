@@ -33,6 +33,7 @@ export function generalizeExtension(file_extension: string): string {
 		case 'mp4':
 		case 'vid':
 		case 'gif':
+		case 'webm':
 			return 'video';
 
 		default:
