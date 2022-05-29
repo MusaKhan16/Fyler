@@ -34,4 +34,9 @@ async def startup():
     Logger.info("Database and tables created")
 
 
+@app.get("/")
+def index():
+    return "Hello World"
+
+
 app.include_router(server_router)

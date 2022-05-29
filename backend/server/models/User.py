@@ -1,9 +1,8 @@
-from dataclasses import field
-import orm
 from typing import Any
 from pydantic import BaseModel
 from server.database import Users
 from hashlib import sha256
+from orm import NoMatch
 
 
 class User(BaseModel):
@@ -58,7 +57,7 @@ class User(BaseModel):
 
         try:
             user = await Users.objects.get(**field_details)
-        except orm.NoMatch:
+        except NoMatch:
             return None
 
         return user

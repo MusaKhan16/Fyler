@@ -1,6 +1,8 @@
 import pathlib
 import aiofiles, aiofiles.os
 
+from typing import Any
+
 
 class UserFolder:
     """A users isolated filesystem"""
@@ -112,6 +114,11 @@ class UserFolder:
         """
         await aiofiles.os.rmdir(self._root / path)
 
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, UserFolder):
+            return NotImplemented
+        return self.root == other.root
+
 
 class UserManager:
     """A UserManager that manages user filesystems"""
@@ -205,6 +212,7 @@ class UserManager:
         None
             If the directory wasn't found
         """
+
         directory_path = (self._root / dir_name).resolve()
 
         if not directory_path.exists():
