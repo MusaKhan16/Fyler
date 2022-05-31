@@ -166,12 +166,14 @@ async def login(request: Request):
     username, password = request_data.get("name"), request_data.get("password")
 
     if not (username and password):
-        logger.error("user and password fields havent been supplied to authenticate")
+        logger.error(
+            "user and password fields havent been supplied to authenticate")
         return JSONResponse(
             {"message": "username and password fields are missing"}, status_code=400
         )
 
-    logger.debug("Going to retrieve users data with given username and password")
+    logger.debug(
+        "Going to retrieve users data with given username and password")
     logger.info(f"{username=} {password=}")
 
     user_data = await User.get_user(
@@ -320,12 +322,14 @@ async def delete_file(
         return JSONResponse({"message": "user directory not found!"}, status_code=403)
 
     logger.info(f"User with id {user_id} was found")
-    logger.warn("The file specificed might not exist in the root folder of the user")
+    logger.warn(
+        "The file specificed might not exist in the root folder of the user")
 
     try:
         await user_folder.remove_file(filename)
     except FileNotFoundError:
-        logger.error(f"The file with name {filename} doesnt exist in users directory")
+        logger.error(
+            f"The file with name {filename} doesnt exist in users directory")
         return JSONResponse(
             {"message": "The given file doesnt exist in the users directory"},
             status_code=403,
