@@ -2,6 +2,7 @@
 # ----------------Backend-------------------
 # Cache
 __pycache__
+.pytest_cache
 
 
 # Modules

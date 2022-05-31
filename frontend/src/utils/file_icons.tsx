@@ -27,6 +27,7 @@ export function generalizeExtension(file_extension: string): string {
 		case 'jpg':
 		case 'png':
 		case 'tiff':
+		case 'jpeg':
 			return 'image';
 
 		case 'mov':

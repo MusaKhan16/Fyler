@@ -233,6 +233,7 @@ class UserManager:
         Returns
         -------
         UserManager
+            The manager that has been setup to be used
 
         """
         manager = cls(path)

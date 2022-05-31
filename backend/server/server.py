@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from server.server_routes import server_router
 from server.database import model_registry
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -12,7 +11,7 @@ logging.basicConfig(
     level=logging.DEBUG,
 )
 
-Logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 origins = ["*"]
 
@@ -31,7 +30,7 @@ async def startup():
     """Startup Configuration runs before api starts"""
 
     await model_registry.create_all()
-    Logger.info("Database and tables created")
+    logger.info("Database and tables created")
 
 
 @app.get("/")

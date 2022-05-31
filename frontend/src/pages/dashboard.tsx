@@ -65,7 +65,9 @@ const Dashboard: React.FC = () => {
 			</div>
 			<div className="grid grid-cols-responsive place-items-center gap-y-8 gap-x-8 w-5/6 mx-auto my-12">
 				{files
-					.filter((filename) => filename.startsWith(query))
+					.filter((filename) =>
+						filename.toLowerCase().includes(query.toLowerCase())
+					)
 					.map((file, idx) => (
 						<FileCard filename={file} key={idx} refetch={refetch} />
 					))}
